@@ -19,6 +19,14 @@ There are also different throwing styles, like hyzer, anhyzer, and roller. It’
 
 ## What’s in my bag?
 
-I don’t usually carry too many discs since I don’t have a backpack for more. I typically bring around eight discs at most, and I try to double up on each type — two putters, two midranges, two drivers, and so on — with different flight characteristics so I can handle a wider range of situations. Here’s a picture of my bag below:
+![A collection of my discs](/disc-collection.JPG)
 
-[Insert pic of bag]
+Top to bottom:
+* __Innova Technicolor Printing Open 2025__ - I honestly don't remember what disc this is but it's some type of Fairway Driver
+* __Innova Echo Star Archon__ - Given to me by a close friend and one of my most reliable discs. Mix of straight and distance
+* __DD Jam Original Streamline Range__ - Asked a friend to buy it for me from Japan. My main putter. Grippy texture and an indented design where I place my thumb makes it so good to toss. Reliable.
+* __DiscMania MD1__ - My go-to midrange disc for the straightest flight paths
+* __Discraft Nuke__ - A miss-print I bought last year during their 4th of July sale. Preferred disc for distance
+* __Innova Champion Beast__ - First disc from my dad which I lost so I just had to re-buy. Good for forehand throws.
+* __Innova Champion RocX3__ - My first midrange purchase. Very predictable fade pattern so good for curved lines.
+* __Discraft 4th of July Special Edition Luna__ - Backup putter. Haven't used much but I love the cover design.
