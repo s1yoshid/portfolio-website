@@ -1,0 +1,38 @@
+---
+import { EXPERIENCE } from '../config';
+---
+
+<section id="experience" class="py-24 px-6 bg-bg-card/30">
+  <div class="max-w-5xl mx-auto">
+
+    <p class="section-label">Where I've been</p>
+    <h2 class="section-title mb-12">Experience</h2>
+
+    <div class="relative pl-6 border-l border-ink-faint space-y-10 stagger">
+      {EXPERIENCE.map((job, i) => (
+        <div class="relative">
+          <!-- Timeline dot -->
+          <div class="absolute -left-[1.65rem] top-1.5
+                      w-3 h-3 rounded-full border-2 border-accent bg-bg"></div>
+
+          <div class="card-base p-6">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+              <div>
+                <p class="font-mono text-2xs tracking-widest uppercase text-accent mb-1">
+                  {job.company}
+                </p>
+                <h3 class="font-display text-xl text-ink">{job.role}</h3>
+              </div>
+              <span class="font-mono text-xs text-ink-muted border border-ink-faint
+                           rounded-full px-3 py-1 whitespace-nowrap">
+                {job.period}
+              </span>
+            </div>
+            <p class="text-ink-muted text-sm leading-relaxed">{job.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

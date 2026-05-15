@@ -1,0 +1,33 @@
+---
+import { SITE } from '../config';
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+  <nav class="max-w-5xl mx-auto flex items-center justify-between
+              bg-bg/60 backdrop-blur-xl border border-ink-faint/50
+              rounded-2xl px-5 py-3">
+
+    <!-- Logo / Name -->
+    <a href="/" class="font-display text-lg text-ink hover:text-accent transition-colors">
+      {SITE.name.split(' ')[0]}
+      <span class="text-accent">.</span>
+    </a>
+
+    <!-- Nav links -->
+    <ul class="hidden md:flex items-center gap-6 font-mono text-xs tracking-widest uppercase text-ink-muted">
+      <li><a href="#about"    class="hover:text-accent transition-colors">About</a></li>
+      <li><a href="#skills"   class="hover:text-accent transition-colors">Skills</a></li>
+      <li><a href="#projects" class="hover:text-accent transition-colors">Projects</a></li>
+      <li><a href="#hobbies"  class="hover:text-accent transition-colors">Hobbies</a></li>
+      <li><a href="#contact"  class="hover:text-accent transition-colors">Contact</a></li>
+    </ul>
+
+    <!-- Resume CTA -->
+    <a href={SITE.resume} download
+       class="btn-primary py-2 px-4 text-xs">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Résumé
+    </a>
+  </nav>
+</header>

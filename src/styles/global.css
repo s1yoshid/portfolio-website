@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-ink font-body antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, #e8a04a0d 0%, transparent 70%);
+  }
+
+  ::selection {
+    @apply bg-accent text-bg;
+  }
+
+  ::-webkit-scrollbar        { width: 4px; }
+  ::-webkit-scrollbar-track  { @apply bg-bg; }
+  ::-webkit-scrollbar-thumb  { @apply bg-ink-faint rounded-full; }
+}
+
+@layer components {
+  .section-label {
+    @apply font-mono text-2xs tracking-[0.25em] uppercase text-accent mb-2;
+  }
+
+  .section-title {
+    @apply font-display text-4xl md:text-5xl text-ink leading-tight;
+  }
+
+  .card-base {
+    @apply bg-bg-card border border-ink-faint rounded-2xl
+           transition-all duration-300
+           hover:border-accent/40 hover:shadow-[0_0_24px_theme(colors.accent.glow)];
+  }
+
+  .tag {
+    @apply font-mono text-2xs tracking-wider uppercase
+           px-2 py-0.5 rounded-full border border-ink-faint text-ink-muted
+           hover:border-accent/50 hover:text-accent transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2
+           font-mono text-sm tracking-widest uppercase
+           px-6 py-3 rounded-full
+           bg-accent text-bg font-medium
+           hover:bg-accent/90 hover:shadow-[0_0_20px_theme(colors.accent.glow)]
+           transition-all duration-300;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2
+           font-mono text-sm tracking-widest uppercase
+           px-6 py-3 rounded-full
+           border border-accent text-accent
+           hover:bg-accent/10 hover:shadow-[0_0_20px_theme(colors.accent.glow)]
+           transition-all duration-300;
+  }
+
+  /* staggered animation utility */
+  .stagger > * { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+  .stagger > *:nth-child(1)  { animation-delay: 0.05s; }
+  .stagger > *:nth-child(2)  { animation-delay: 0.12s; }
+  .stagger > *:nth-child(3)  { animation-delay: 0.19s; }
+  .stagger > *:nth-child(4)  { animation-delay: 0.26s; }
+  .stagger > *:nth-child(5)  { animation-delay: 0.33s; }
+  .stagger > *:nth-child(6)  { animation-delay: 0.40s; }
+}
+
+/* Keyframes must live outside @layer so they aren't purged */
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(18px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.8); }
+}

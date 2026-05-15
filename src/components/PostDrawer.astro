@@ -1,0 +1,229 @@
+---
+// PostDrawer.astro
+// Renders ALL post/hobby content at build time as hidden panels.
+// JS handles open/close only — no runtime fetching needed.
+import { getCollection, render } from 'astro:content';
+
+const posts   = (await getCollection('posts')).filter(p => !p.data.draft);
+const hobbies = await getCollection('hobbies');
+
+// Render markdown to HTML for every entry
+const renderedPosts = await Promise.all(
+  posts.map(async p => ({ ...p, html: (await render(p)).Content }))
+);
+const renderedHobbies = await Promise.all(
+  hobbies.map(async h => ({ ...h, html: (await render(h)).Content }))
+);
+
+const emojiMap: Record<string, string> = {
+  Hardware: '🔧', DIY: '🔩', Baking: '🍞', Food: '🧑‍🍳',
+  Photography: '📷', Analog: '🎞️', Music: '🎵', Gaming: '🎮',
+  Travel: '✈️', default: '✦',
+};
+function getEmoji(tags: string[]) {
+  for (const tag of tags) if (emojiMap[tag]) return emojiMap[tag];
+  return emojiMap.default;
+}
+---
+
+<!-- ░░ BACKDROP ░░ -->
+<div id="drawer-backdrop"
+     class="fixed inset-0 z-40 bg-bg/70 backdrop-blur-sm opacity-0 pointer-events-none
+            transition-opacity duration-300">
+</div>
+
+<!-- ░░ DRAWER ░░ -->
+<aside id="post-drawer"
+       class="fixed top-0 right-0 z-50 h-full w-full max-w-2xl
+              bg-[#111] border-l border-ink-faint
+              translate-x-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+              flex flex-col overflow-hidden">
+
+  <!-- Header bar -->
+  <div class="flex items-center justify-between px-8 py-5 border-b border-ink-faint flex-shrink-0">
+    <span id="drawer-type-label" class="section-label mb-0">Post</span>
+    <button id="drawer-close"
+            class="w-9 h-9 flex items-center justify-center rounded-full
+                   border border-ink-faint text-ink-muted
+                   hover:border-accent hover:text-accent transition-all duration-200"
+            aria-label="Close">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="flex-1 overflow-y-auto overscroll-contain">
+    <div class="px-8 pt-8 pb-4">
+      <!-- Meta: tags + date -->
+      <div id="drawer-meta" class="flex flex-wrap items-center gap-3 mb-6"></div>
+      <!-- Title -->
+      <h2 id="drawer-title"
+          class="font-display text-3xl md:text-4xl text-ink leading-tight mb-8"></h2>
+    </div>
+
+    <!-- Prose body -->
+    <div id="drawer-body" class="px-8 pb-16 prose-content"></div>
+  </div>
+
+  <!-- Hidden content panels — rendered at build time -->
+  <div class="hidden" aria-hidden="true">
+    {renderedPosts.map(post => (
+      <div data-drawer-id={`post-${post.slug}`}
+           data-title={post.data.title}
+           data-date={post.data.date}
+           data-tags={JSON.stringify(post.data.tags)}
+           data-type="Project Post">
+        <post.html />
+      </div>
+    ))}
+    {renderedHobbies.map(hobby => (
+      <div data-drawer-id={`hobby-${hobby.slug}`}
+           data-title={hobby.data.title}
+           data-date={hobby.data.date}
+           data-tags={JSON.stringify(hobby.data.tags)}
+           data-type="Hobby"
+           data-emoji={getEmoji(hobby.data.tags)}>
+        <hobby.html />
+      </div>
+    ))}
+  </div>
+</aside>
+
+<style is:global>
+/* ── Prose typography inside the drawer ─────────────────────────── */
+.prose-content {
+  color: rgb(138 131 120);   /* ink-muted */
+  line-height: 1.75;
+  font-size: 0.9375rem;
+}
+.prose-content h2,
+.prose-content h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  color: rgb(240 236 228);   /* ink */
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+.prose-content h2 { font-size: 1.375rem; }
+.prose-content h3 { font-size: 1.125rem; }
+
+.prose-content p  { margin-bottom: 1.25rem; }
+.prose-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.prose-content li { margin-bottom: 0.35rem; }
+
+.prose-content a  { color: rgb(232 160 74); text-underline-offset: 3px; }
+.prose-content a:hover { opacity: 0.8; }
+
+.prose-content strong { color: rgb(240 236 228); font-weight: 600; }
+.prose-content em     { color: rgb(200 194 184); }
+
+/* Code blocks */
+.prose-content pre {
+  background: rgb(20 20 20);
+  border: 1px solid rgb(58 53 48);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+.prose-content code {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  color: rgb(232 160 74);    /* accent */
+}
+.prose-content pre code {
+  color: rgb(200 194 184);   /* softer in blocks */
+}
+/* Inline code */
+.prose-content :not(pre) > code {
+  background: rgb(20 20 20);
+  border: 1px solid rgb(58 53 48);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+}
+
+.prose-content hr {
+  border-color: rgb(58 53 48);
+  margin: 2rem 0;
+}
+.prose-content blockquote {
+  border-left: 3px solid rgb(232 160 74 / 0.4);
+  padding-left: 1rem;
+  color: rgb(138 131 120);
+  font-style: italic;
+  margin-bottom: 1.25rem;
+}
+
+.prose-content iframe,
+.prose-content video {
+  width: 100%;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgb(58 53 48); /* Matches your code block border */
+}
+</style>
+
+<script>
+// ── Drawer logic (vanilla JS, no framework) ──────────────────────
+const drawer    = document.getElementById('post-drawer')!;
+const backdrop  = document.getElementById('drawer-backdrop')!;
+const closeBtn  = document.getElementById('drawer-close')!;
+const titleEl   = document.getElementById('drawer-title')!;
+const bodyEl    = document.getElementById('drawer-body')!;
+const metaEl    = document.getElementById('drawer-meta')!;
+const typeLabel = document.getElementById('drawer-type-label')!;
+
+function openDrawer(id: string) {
+  const source = document.querySelector(`[data-drawer-id="${id}"]`);
+  if (!source) return;
+
+  // Populate header
+  typeLabel.textContent = source.getAttribute('data-type') ?? 'Post';
+  titleEl.textContent   = source.getAttribute('data-title') ?? '';
+
+  // Populate meta (tags + date)
+  const tags = JSON.parse(source.getAttribute('data-tags') ?? '[]') as string[];
+  const date = source.getAttribute('data-date') ?? '';
+  const emoji = source.getAttribute('data-emoji') ?? '';
+  metaEl.innerHTML = [
+    emoji ? `<span class="text-2xl mr-1">${emoji}</span>` : '',
+    ...tags.map(t => `<span class="tag">${t}</span>`),
+    date
+      ? `<time class="font-mono text-2xs text-ink-muted/60 ml-auto">
+           ${new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+         </time>`
+      : '',
+  ].join('');
+
+  // Copy rendered HTML into body
+  bodyEl.innerHTML = source.innerHTML;
+
+  // Scroll to top
+  drawer.querySelector('.flex-1.overflow-y-auto')!.scrollTop = 0;
+
+  // Show
+  drawer.classList.remove('translate-x-full');
+  backdrop.classList.remove('opacity-0', 'pointer-events-none');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  drawer.classList.add('translate-x-full');
+  backdrop.classList.add('opacity-0', 'pointer-events-none');
+  document.body.style.overflow = '';
+}
+
+closeBtn.addEventListener('click', closeDrawer);
+backdrop.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// Wire up all cards
+document.addEventListener('click', e => {
+  const card = (e.target as Element).closest('[data-open-drawer]');
+  if (card) openDrawer(card.getAttribute('data-open-drawer')!);
+});
+</script>

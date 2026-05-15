@@ -1,0 +1,55 @@
+---
+// Posts/Projects section
+// To add a post: create a new .md file in src/content/posts/
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<section id="projects" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+
+    <p class="section-label">What I've shipped</p>
+    <h2 class="section-title mb-3">Project Posts</h2>
+    <p class="text-ink-muted mb-12 max-w-lg">
+      Write-ups on things I've built, problems I've solved, and lessons I've learned.
+    </p>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
+      {posts.map((post, i) => (
+        <article data-open-drawer={`post-${post.slug}`}
+                 class="card-base p-6 flex flex-col gap-4 group cursor-pointer hover:-translate-y-1 transition-transform duration-200">
+          <span class="font-mono text-xs text-accent/40 group-hover:text-accent transition-colors">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+
+          <div class="flex-1">
+            <h3 class="font-display text-xl text-ink leading-snug mb-2 group-hover:text-accent transition-colors duration-300">
+              {post.data.title}
+            </h3>
+            <p class="text-ink-muted text-sm leading-relaxed">
+              {post.data.summary}
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex flex-wrap gap-1.5">
+              {post.data.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            <span class="flex items-center gap-1 font-mono text-2xs text-ink-muted/40 group-hover:text-accent/70 transition-colors ml-2 whitespace-nowrap">
+              Read
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>

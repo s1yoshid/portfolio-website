@@ -1,0 +1,39 @@
+---
+import { SKILLS } from '../config';
+
+// Group skills by category
+const categories = [...new Set(SKILLS.map(s => s.category))];
+---
+
+<section id="skills" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+
+    <p class="section-label">What I work with</p>
+    <h2 class="section-title mb-3">Tech Stack</h2>
+    <p class="text-ink-muted mb-12 max-w-lg">
+      Tools and technologies I reach for. I'm always picking up something new.
+    </p>
+
+    <div class="space-y-8">
+      {categories.map(cat => (
+        <div>
+          <p class="font-mono text-2xs tracking-[0.2em] uppercase text-ink-muted mb-4 flex items-center gap-3">
+            {cat}
+            <span class="flex-1 h-px bg-ink-faint/50"></span>
+          </p>
+
+          <div class="flex flex-wrap gap-3 stagger">
+            {SKILLS.filter(s => s.category === cat).map(skill => (
+              <div class="card-base flex items-center gap-3 px-4 py-3 cursor-default
+                          hover:-translate-y-0.5 transition-transform duration-200">
+                <i class={`${skill.icon} text-2xl`}></i>
+                <span class="font-body text-sm text-ink-muted">{skill.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
