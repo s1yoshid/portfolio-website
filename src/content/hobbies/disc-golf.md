@@ -22,11 +22,11 @@ There are also different throwing styles, like hyzer, anhyzer, and roller. It’
 ![A collection of my discs](/disc-collection.JPG)
 
 Top to bottom:
-* __Innova Technicolor Printing Open 2025__ - I honestly don't remember what disc this is but it's some type of Fairway Driver
-* __Innova Echo Star Archon__ - Given to me by a close friend and one of my most reliable discs. Mix of straight and distance
+* __Innova Technicolor Printing Open 2025 Leopard3__ - Had to pick up a tournament disc for the one-time. Backup driver for straight lines.
+* __Innova Echo Star Archon__ - Given to me by a close friend and one of my most reliable discs. Mix of straight and distance.
 * __DD Jam Original Streamline Range__ - Asked a friend to buy it for me from Japan. My main putter. Grippy texture and an indented design where I place my thumb makes it so good to toss. Reliable.
-* __DiscMania MD1__ - My go-to midrange disc for the straightest flight paths
-* __Discraft Nuke__ - A miss-print I bought last year during their 4th of July sale. Preferred disc for distance
+* __DiscMania MD1__ - My go-to midrange disc for the straightest flight paths.
+* __Discraft Nuke__ - A miss-print I bought last year during their 4th of July sale. Preferred disc for distance.
 * __Innova Champion Beast__ - First disc from my dad which I lost so I just had to re-buy. Good for forehand throws.
 * __Innova Champion RocX3__ - My first midrange purchase. Very predictable fade pattern so good for curved lines.
 * __Discraft 4th of July Special Edition Luna__ - Backup putter. Haven't used much but I love the cover design.
