@@ -19,7 +19,7 @@ const posts = (await getCollection('posts'))
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
       {posts.map((post, i) => (
-        <article data-open-drawer={`post-${post.slug}`}
+        <article data-open-drawer={`post-${post.id}`}
                  class="card-base p-6 flex flex-col gap-4 group cursor-pointer hover:-translate-y-1 transition-transform duration-200">
           <span class="font-mono text-xs text-accent/40 group-hover:text-accent transition-colors">
             {String(i + 1).padStart(2, '0')}

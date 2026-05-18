@@ -1,4 +1,5 @@
 ---
+import Analytics from '@vercel/analytics/astro';
 import '../styles/global.css';
 import { SITE } from '../config';
 
@@ -15,14 +16,15 @@ const {
 <!doctype html>
 <html lang="en">
 <head>
+  <Analytics />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <title>{title}</title>
-
+  
   <!-- Devicons CDN for skill icons -->
   <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
 </head>
 <body class="min-h-screen">
   <slot />

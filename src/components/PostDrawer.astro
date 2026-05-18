@@ -70,7 +70,7 @@ function getEmoji(tags: string[]) {
   <!-- Hidden content panels — rendered at build time -->
   <div class="hidden" aria-hidden="true">
     {renderedPosts.map(post => (
-      <div data-drawer-id={`post-${post.slug}`}
+      <div data-drawer-id={`post-${post.id}`}
            data-title={post.data.title}
            data-date={post.data.date}
            data-tags={JSON.stringify(post.data.tags)}
@@ -79,7 +79,7 @@ function getEmoji(tags: string[]) {
       </div>
     ))}
     {renderedHobbies.map(hobby => (
-      <div data-drawer-id={`hobby-${hobby.slug}`}
+      <div data-drawer-id={`hobby-${hobby.id}`}
            data-title={hobby.data.title}
            data-date={hobby.data.date}
            data-tags={JSON.stringify(hobby.data.tags)}
