@@ -43,7 +43,7 @@ For the optocoupler, I went with the H11L1 over the more commonly-referenced 6N1
 The two resistors flanking the optocoupler needed different reasoning to land on:
 
 - **Input side (220Ω):** current here is already supplied by the DTX500's own MIDI OUT, so this resistor isn't doing much optimizing — it just needs to land inside the H11L1's rated LED range. Working through the loop equation (accounting for the driving transistor's saturation voltage and the LED's forward voltage from the datasheet) landed at about 7.5mA of loop current against a 1.6mA turn-on threshold — comfortable margin, and conveniently close to what the MIDI 1.0 spec itself recommends.
-- **Output pull-up:** more moving parts here — bit period (32µs at 31,250 baud), power dissipation, and the RC time constant against the H11L1's rated rise/fall time. The timing margin turned out to be wide open no matter which reasonable value I picked, so the real tradeoff came down to power dissipation versus noise immunity: a lower resistor value draws a bit more current, but also lowers that node's impedance, making it harder for stray noise to disturb. Landed on 220Ω.
+- **Output pull-up:** more moving parts here — bit period (32µs at 31,250 baud), power dissipation, and the RC time constant against the H11L1's rated rise/fall time. The timing margin turned out to be wide open no matter which reasonable value I picked, so the real tradeoff came down to power dissipation versus noise immunity: a lower resistor value draws a bit more current, but also lowers that node's impedance, making it harder for stray noise to disturb. Landed on 220Ω initially — later revised up to 1kΩ during firmware debugging, mostly to cut the H11L1's output current further. As it turned out, the noise-immunity tradeoff was never actually the deciding factor for the bug that showed up later; a buffer bug in software was.
 
 A 1N4148 diode sits anti-parallel across the optocoupler's LED as a safety measure, in case pin 4 and pin 5 ever end up wired backwards. If that happens, the diode clamps the reverse voltage to under a volt — well below the LED's own reverse breakdown of around 6V.
 
@@ -51,6 +51,43 @@ A 1N4148 diode sits anti-parallel across the optocoupler's LED as a safety measu
 
 From there it was down to breadboarding the circuit and testing it against the real DTX500 — including working through the DIN jack's pin numbering, which turned out to be its own small trap (the physical layout isn't the simple pair you'd assume, and it's easy to mirror depending on which side of the connector you're looking at). Validated everything with a multimeter before ever connecting the actual module, then confirmed it under real playing conditions.
 
-## What's next
+## The firmware
 
-*(Firmware writeup coming soon — how the Teensy 4.0 parses the incoming DIN MIDI byte stream, including running status handling, and re-sends it as native USB MIDI using Teensyduino's `usbMIDI` library.)*
+On the Teensy, DIN MIDI parsing is handled by the Arduino MIDI Library, listening on `Serial3` at the fixed 31,250 baud rate. Rather than reading each parsed message and forwarding it through one generic send call, the firmware registers a separate handler per message type, and routes each to the matching function in Teensyduino's `usbMIDI` library:
+
+```mermaid
+graph LR
+    A["DIN MIDI byte stream<br/>Serial3, 31,250 baud"] --> B{{"Arduino MIDI Library<br/>parses + routes by type"}}
+    B -->|Note On/Off, CC, PC| C["usbMIDI.sendNoteOn(), etc."]
+    B -->|Clock, Start, Stop,<br/>Active Sensing| D["usbMIDI.sendClock(), etc."]
+    B -->|SysEx| E["usbMIDI.sendSysEx()"]
+    C --> F["Laptop / DAW"]
+    D --> F
+    E --> F
+```
+
+That per-type routing matters more than it looks. System Real-Time messages like MIDI Clock don't carry a channel at all, so stuffing them through a single generic `send(type, data1, data2, channel, cable)` call — a channel value they don't have — produces malformed output. Checking the DTX500's own MIDI implementation chart confirmed exactly what it actually transmits: channel messages, a single fixed SysEx string (GM System On), and Clock/Start/Stop/Active Sensing. A small, fully-enumerable set, which made it possible to give every message type in it a correct, dedicated path instead of a best-effort generic one.
+
+The more interesting part of this stage was tracking down an intermittent bug: every so often, a burst of notes I never played would fire all at once — "machine-gun triggering." Ruling out the obvious suspects took a while — a headphone test on the DTX500's own local audio output ruled out the drum module's trigger/crosstalk settings, and a side-by-side against the old cable suggested the DTX500's own MIDI output wasn't clean either, but neither fully explained what I was seeing. The thing that actually cracked it was raw MIDI byte logging with timestamps. One captured burst contained 746 messages inside a 377-millisecond window — and at MIDI's fixed 31,250 baud rate, that many messages physically cannot arrive over the wire in under about 716 milliseconds. Some of what was logged had to be duplicated, not freshly received: a buffer bug, not electrical noise.
+
+The actual cause was the Teensy 4's default 64-byte hardware serial receive buffer — enough headroom under normal playing, but not during a genuinely fast burst. First attempt at fixing it (`#define SERIAL3_RX_BUFFER_SIZE`) turned out to be a dead end: that override works on the Teensy 3.x core, but the Teensy 4.x core hardcodes each port's buffer size directly with no such override hook, so the define silently did nothing. The real fix is `Serial3.addMemoryForRead()`, called after `Serial3.begin()`, handing the driver a real chunk of extra buffer memory. After that change, the machine-gun triggering hasn't come back under repeated testing.
+
+## Demo & source
+
+<iframe 
+  width="100%" 
+  height="315" 
+  src="https://www.youtube.com/embed/68tiCkX5PxI?si=-YE6TVRJbfNrqP6X" 
+  frameborder="0" 
+  allowfullscreen>
+</iframe>
+
+<iframe 
+  width="100%" 
+  height="315" 
+  src="https://www.youtube.com/embed/dCFeLcfKbhQ?si=8FObG02TiwVVGlAC" 
+  frameborder="0" 
+  allowfullscreen>
+</iframe>
+
+Full firmware source and circuit notes are on GitHub: *https://github.com/s1yoshid/dtx500-midi-to-usb-bridge*
