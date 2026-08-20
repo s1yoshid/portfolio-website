@@ -49,6 +49,8 @@ A 1N4148 diode sits anti-parallel across the optocoupler's LED as a safety measu
 
 ## Breadboarding and testing
 
+![Prototype circuit on breadboard.](/bridge-prototype.JPG)
+
 From there it was down to breadboarding the circuit and testing it against the real DTX500 — including working through the DIN jack's pin numbering, which turned out to be its own small trap (the physical layout isn't the simple pair you'd assume, and it's easy to mirror depending on which side of the connector you're looking at). Validated everything with a multimeter before ever connecting the actual module, then confirmed it under real playing conditions.
 
 ## The firmware

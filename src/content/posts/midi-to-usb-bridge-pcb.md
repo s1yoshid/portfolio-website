@@ -26,17 +26,7 @@ A bare chip means designing your own USB support circuitry — D+/D- routing, se
 
 The H11L1 exists specifically to keep the DIN-5 MIDI loop's ground electrically separate from the MCU/USB side — that's the entire reason to use an optocoupler instead of wiring straight into a UART. Getting that isolation from schematic to copper meant two separate ground nets, `GND` on the MIDI side and `GND2` on the MCU/USB side, placed and poured so neither a stray trace nor a merged copper zone ever bridges them.
 
-```mermaid
-graph LR
-    subgraph DTX500 side [GND net]
-        A["DTX500 MIDI OUT<br/>5-pin DIN, current loop"] --> B["220Ω resistor + 1N4148"]
-    end
-    B --> C{{"H11L1 optocoupler<br/>isolation barrier"}}
-    subgraph XIAO side [GND2 net]
-        C --> D["XIAO RP2040 UART0 RX<br/>3.3V logic, pin D7"]
-        D -->|USB MIDI| E["Laptop / DAW"]
-    end
-```
+![PCB diagram on KiCad.](/bridge-pcb.png)
 
 The DIN-5 connector ended up dominating the board's footprint — its mechanical locating pegs aren't optional — with everything else laid out in a straight line so signal flow reads left to right: connector, isolation, pull-up, MCU. Not an accident of convenience; keeping the MIDI-side parts clustered on one side of the opto and the MCU-side parts on the other kept every isolation-crossing trace short and made the ground split easy to draw once I got to copper pours.
 
