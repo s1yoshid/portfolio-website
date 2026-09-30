@@ -32,8 +32,26 @@ I set up my username and password and chose “starbase” as the server name. �
 
 Since I skipped the network configuration during installation, I had to handle it afterward. It wasn’t too difficult, but I spent some time deciding how I wanted to manage it. I read about Netplan and NetworkManager, and AI suggested NetworkManager, but I decided to stick with Netplan and `systemd-networkd`. This will be a static server that rarely changes networks, so I didn’t need NetworkManager’s more convenient commands for switching connections.
 
-I also added an address reservation for the server in my router’s settings. That way, it will keep the same local IP address and be easier to connect to.
+I also added an address reservation for the server in my router’s settings. That way, it will keep the same local IP address and be easier to connect to. Afterwards, I set up `ufw` (Uncomplicated Firewall) so only SSH and later on my AI model's API ports are reachable. 
 
 ---
 
-The next step is installing Ollama and the rest of the AI tools. I’m still working through that setup, so I’ll add the details here once I’ve had a chance to test everything.
+## Setting Up Llama.cpp
+
+I decided to try to configure and set up llama-cpp directly instead of using Ollama, as I read online that the setup wasn't significantly harder and I would gain some performance benefits, along with more fine-grained control over what resources the model can use, including the exact model type (e.g., from a gguf file).
+
+Using this guide from the official maintainers: https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md#cpu-build, I found the process of installing build dependencies to compiling the code to produce binaries to be straightforward. I installed Git, CMake, build-essential, libssl-dev, and ccache. Build-essential was an easy way to get GCC, g++, and Make all in one. libssl-dev was recommended by the tutorial if I ever wanted to set up HTTPS. ccache was recommended by Claude to speed up future rebuilds when I update llama.cpp. I cloned the repository and used CMake to compile the code. Although I was warned that compiling would take 10-25 minutes, it only took around 8 minutes.
+
+After compiling, I had all my binaries, including llama-cli and llama-server, ready to use. The next step was downloading an LLM model from Hugging Face. I opted for the "Llama 3.2 3B Instruct, Q4_K_M quantization" for now, as it was suggested by Claude based on my RAM size and overall performance. I plan to swap models later to test for different tasks.
+
+Once I downloaded the model into a 'models' folder, I tested it using llama-cli to ensure everything was working correctly. So far, I'm getting a modest 7-7.7 tokens per second, which is acceptable for my purposes, but I'm not sure what AI hobbyists claim to be the minimum speed these days. After that, I let Claude generate a small systemd service file for me to create the llama-server service and port it to 8080. I then made sure to open port 8080 on ufw so that other devices on the network could reach the server.
+
+---
+
+### Next Steps
+
+Now that I have an LLM server running on my old laptop, I'm trying to figure out some uses for it. Here are a couple of things I'm currently trying to look into:
+
+- Running document or internet RAG
+- Turning it into a local AI coding assistant
+- Porting over my AI pipeline (Whisper, Gemma 3.1b, Kokoro) that I used for my AI chatbot project to the server.
